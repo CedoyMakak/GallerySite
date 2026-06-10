@@ -1,62 +1,117 @@
 "use client";
 
 import { MessageCircle, Send, X } from "lucide-react";
+import { FavoriteButton } from "@/components/favorite-button";
 import { Painting } from "@/types/painting";
+import { ArtistProfile } from "@/types/artist-profile";
 
 type BuyModalProps = {
   painting: Painting | null;
+  profile: ArtistProfile;
   onClose: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 };
 
-export function BuyModal({ painting, onClose }: BuyModalProps) {
-  if (!painting) {
-    return null;
-  }
+export function BuyModal({
+  painting,
+  profile,
+  onClose,
+  isFavorite = false,
+  onToggleFavorite,
+}: BuyModalProps) {
+  if (!painting) return null;
 
-  const message = `Hello! I would like to buy "${painting.title}" (${painting.technique}, ${painting.dimensions}) for ${painting.price} RUB.`;
-  const whatsappLink = `https://wa.me/00000000000?text=${encodeURIComponent(message)}`;
-  const telegramLink = `https://t.me/your_username?text=${encodeURIComponent(message)}`;
+  const message = `Здравствуйте! Хочу приобрести картину «${painting.title}» (${painting.technique}, ${painting.dimensions}) за ${painting.price.toLocaleString("ru-RU")} ₽.`;
+
+  const whatsappNumber = profile.whatsapp.replace(/\D/g, "");
+  const telegramUsername = profile.telegram.replace(/^@/, "");
+
+  const whatsappHref = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
+    : null;
+  const telegramHref = telegramUsername
+    ? `https://t.me/${telegramUsername}?text=${encodeURIComponent(message)}`
+    : null;
+
+  const hasContacts = whatsappHref || telegramHref;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-xl rounded-2xl border border-stone-300 bg-[#f7f3ec] p-6 shadow-2xl">
-        <div className="mb-4 flex items-start justify-between">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="w-full max-w-md border border-line bg-paper shadow-2xl">
+        {/* Шапка */}
+        <div className="flex items-start justify-between gap-3 border-b border-line px-6 pt-5 pb-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Purchase Request</p>
-            <h2 className="text-2xl font-semibold text-stone-900">{painting.title}</h2>
+            <p className="eyebrow text-[9px]">Запрос на покупку</p>
+            <h2 className="mt-2 font-display text-2xl text-ink">{painting.title}</h2>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-full border border-stone-300 p-2 text-stone-600 transition hover:bg-stone-900 hover:text-stone-100"
-            aria-label="Close modal"
-          >
-            <X size={16} />
-          </button>
+          <div className="flex shrink-0 items-center gap-2 pt-1">
+            {onToggleFavorite ? (
+              <FavoriteButton active={isFavorite} onToggle={onToggleFavorite} />
+            ) : null}
+            <button
+              onClick={onClose}
+              className="flex h-8 w-8 items-center justify-center border border-line text-muted transition hover:border-ink hover:text-ink"
+              aria-label="Закрыть"
+            >
+              <X size={14} />
+            </button>
+          </div>
         </div>
 
-        <p className="mb-2 text-sm text-stone-700">{painting.technique}</p>
-        <p className="mb-1 text-sm text-stone-500">Dimensions: {painting.dimensions}</p>
-        <p className="mb-6 text-lg font-semibold text-stone-900">{painting.price.toLocaleString()} RUB</p>
+        {/* Детали */}
+        <div className="px-6 pt-4 pb-5">
+          <p className="text-[10px] tracking-[0.2em] uppercase text-muted">
+            {painting.technique} · {painting.dimensions}
+          </p>
+          <p className="mt-3 font-display text-2xl text-ink">
+            {painting.price.toLocaleString("ru-RU")} ₽
+          </p>
+          {painting.description ? (
+            <p className="mt-3 text-sm leading-relaxed text-muted">{painting.description}</p>
+          ) : null}
+        </div>
 
-        <div className="space-y-3">
-          <a
-            href={whatsappLink}
-            target="_blank"
-            rel="noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2e2c2a] px-4 py-3 text-sm font-medium text-stone-100 transition hover:bg-black"
-          >
-            <MessageCircle size={16} />
-            Contact via WhatsApp
-          </a>
-          <a
-            href={telegramLink}
-            target="_blank"
-            rel="noreferrer"
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-stone-400 px-4 py-3 text-sm font-medium text-stone-900 transition hover:bg-stone-100"
-          >
-            <Send size={16} />
-            Contact via Telegram
-          </a>
+        {/* Кнопки связи */}
+        <div className="space-y-2 border-t border-line px-6 pt-4 pb-6">
+          {hasContacts ? (
+            <>
+              <p className="mb-3 text-[10px] tracking-[0.2em] uppercase text-muted">
+                Связаться с художником
+              </p>
+              {whatsappHref ? (
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-solid-ink flex w-full justify-center gap-2"
+                >
+                  <MessageCircle size={15} />
+                  Написать в WhatsApp
+                </a>
+              ) : null}
+              {telegramHref ? (
+                <a
+                  href={telegramHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-outline-gold flex w-full justify-center gap-2"
+                >
+                  <Send size={15} />
+                  Написать в Telegram
+                </a>
+              ) : null}
+            </>
+          ) : (
+            <p className="text-sm text-muted">
+              Контактная информация не указана. Добавьте WhatsApp или Telegram в настройках профиля.
+            </p>
+          )}
         </div>
       </div>
     </div>

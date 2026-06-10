@@ -1,14 +1,176 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f7f3ec;
-  --foreground: #232323;
-  --stone: #d6cec2;
-  --cream: #f1ebe0;
-  --charcoal: #2e2c2a;
+@theme {
+  /* Палитра — тёплый кремовый + шампанское-золото */
+  --color-cream: #FAF8F3;
+  --color-cream-dark: #F2EDDF;
+  --color-paper: #FFFFFF;
+
+  --color-ink: #1A1612;
+  --color-ink-soft: #3D352B;
+  --color-muted: #8A7E6E;
+  --color-muted-light: #B8AE9D;
+
+  --color-line: #E8DFD0;
+  --color-line-soft: #F0E9DA;
+
+  --color-gold: #C9A961;
+  --color-gold-light: #E8C875;
+  --color-gold-dark: #9C8345;
+  --color-gold-soft: #F4ECD4;
+
+  /* Шрифты подставит next/font в layout.tsx */
+  --font-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  /* Углы — почти прямые, люкс не любит закругления */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.005em;
+  }
+
+  ::selection {
+    background: var(--color-gold-soft);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  /* Маленькая золотая мета-метка ("КОЛЛЕКЦИЯ 2026") */
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Тонкая золотая чёрточка-разделитель */
+  .gold-divider {
+    width: 44px;
+    height: 1px;
+    background: var(--color-gold);
+    border: 0;
+  }
+
+  .gold-divider-lg {
+    width: 80px;
+    height: 1px;
+    background: var(--color-gold);
+    border: 0;
+  }
+
+  /* Контурная кнопка ("СМОТРЕТЬ ВСЁ") */
+  .btn-outline-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border: 0.5px solid var(--color-gold);
+    background: transparent;
+    color: var(--color-ink);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 250ms ease;
+  }
+
+  .btn-outline-gold:hover {
+    background: var(--color-ink);
+    color: var(--color-gold-light);
+    border-color: var(--color-ink);
+  }
+
+  /* Заполненная тёмная кнопка ("КУПИТЬ" в модалке) */
+  .btn-solid-ink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--color-ink);
+    color: var(--color-gold-light);
+    border: 0;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 250ms ease;
+  }
+
+  .btn-solid-ink:hover {
+    background: var(--color-ink-soft);
+  }
+
+  /* Текстовая ссылка-кнопка в карточке */
+  .btn-text-gold {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 200ms ease;
+  }
+
+  .btn-text-gold:hover {
+    color: var(--color-gold-dark);
+  }
+
+  /* Бейдж "ПРОДАНО" */
+  .badge-sold {
+    display: inline-block;
+    background: var(--color-ink);
+    color: var(--color-gold);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    padding: 5px 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  /* Инпут для админки */
+  .input-luxe {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--color-paper);
+    border: 0.5px solid var(--color-line);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    transition: border-color 200ms ease;
+    outline: none;
+  }
+
+  .input-luxe:focus {
+    border-color: var(--color-gold);
+  }
+
+  .input-luxe::placeholder {
+    color: var(--color-muted-light);
+  }
 }

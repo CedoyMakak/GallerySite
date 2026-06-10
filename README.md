@@ -10,7 +10,7 @@ Luxury-style single-artist gallery website built with Next.js, Tailwind CSS, and
 - Secret admin route: `/admin`.
 - Basic password protection on admin route (client-side session).
 - Admin can upload paintings (image file supported) and mark paintings as Sold.
-- Mock database using `localStorage`.
+- Mock databae using `localStorage`.
 
 ## Run locally
 
@@ -71,7 +71,22 @@ create table if not exists paintings (
   sold boolean default false,
   created_at timestamp with time zone default now()
 );
+
+create table if not exists artist_profile (
+  id text primary key,
+  name text,
+  bio text,
+  avatar_url text
+);
+
+insert into artist_profile (id, name, bio, avatar_url)
+values ('main', 'Cartina Artist', 'Original paintings, curated drops, and private commissions.', null)
+on conflict (id) do nothing;
 ```
+
+### 2b) Create reviews table
+
+Run `supabase/reviews.sql` in the Supabase SQL editor (or copy from that file). This adds artist reviews with moderation (`pending` → `approved`).
 
 ### 3) Configure storage bucket
 
